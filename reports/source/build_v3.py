@@ -31,16 +31,41 @@ css = base_css + """
 .how{display:flex;align-items:stretch;margin:2mm 0 1mm}
 .how .s{flex:1;border:1px solid var(--rule);background:#fbf9f4;padding:1.8mm 2.4mm;font-size:8.2pt;line-height:1.35;color:var(--ink)}
 .how .a{width:6mm;display:flex;align-items:center;justify-content:center;color:var(--muted);flex:none}
-.verdict{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);margin-top:3mm}
+.verdict{display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);margin-top:3mm}
 .verdict>div{padding:2.2mm 2mm 2.4mm 0;font-size:8pt;color:var(--ink);font-weight:600;line-height:1.3}
 .verdict .tag{margin-top:1.3mm}
 .bottom{margin-top:3.5mm;background:var(--red-soft);border-left:3px solid var(--red);padding:3mm 4mm;font-size:9.3pt;color:var(--ink)}
 .bottom.good{background:var(--green-soft);border-left-color:var(--green)}
-.needs{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--ink);margin:2mm 0 2mm}
+.needs{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--ink);margin:2mm 0 2mm}
+.needs>div:nth-child(-n+3){border-bottom:1px solid var(--ink)}
+.needs>div:nth-child(3n){border-right:0}
 .needs>div{padding:2.6mm 2.6mm;border-right:1px solid var(--ink);font-size:8.4pt;line-height:1.38;color:var(--ink)}
-.needs>div:last-child{border-right:0}
+
 .needs b{display:block;font-size:8.8pt;margin-bottom:.8mm}
 .wide .wbody{min-height:0}
+.ds .whead{background:#1e6b43;padding:3mm 3.5mm}
+.ds .wt{font-family:var(--serif);font-weight:400;font-size:11pt}
+.ds .av{background:#f5f2ea;color:#1e6b43}
+.ds .wbody{background:#f5f2ea}
+.ds .m.b{background:#fff;border:1px solid var(--rule);font-family:var(--sans);border-radius:1.2mm}
+.ds .m.u{background:#1e6b43;border-radius:1.2mm}
+.course{align-self:flex-start;width:84%;border:1px solid var(--ink);background:#fff;padding:2mm 2.6mm;font-size:8pt;line-height:1.35}
+.course .ct{font-family:var(--serif);font-size:10.5pt;color:var(--ink)}
+.course .cm{font-family:var(--mono);font-size:6.4pt;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin:.6mm 0 1.4mm}
+.course .cb{display:inline-block;background:var(--ink);color:#fff;font-family:var(--mono);font-size:6.6pt;letter-spacing:.06em;padding:.6mm 2mm;text-transform:uppercase;margin-right:1mm}
+.course .cb.o{background:#fff;color:var(--ink);border:1px solid var(--ink)}
+.zs .whead{background:#2a6fdb}
+.zs .av{background:#fff;color:#2a6fdb;font-family:var(--sans);font-weight:600}
+.zs .wbody{background:#fff}
+.zs .m.b{background:#eef1f6;border-radius:3mm}
+.zs .m.u{background:#2a6fdb}
+.zbrand{text-align:center;font-size:6.6pt;color:#8a8f99;padding:1.2mm 0 1.6mm;border-top:1px solid #e3e6ec}
+.ann{list-style:none;padding:0;margin:2.4mm 0 0}
+.ann li{font-size:8.4pt;line-height:1.4;padding-left:4.5mm;position:relative;margin-bottom:1.3mm}
+.ann li:before{position:absolute;left:0;top:0;font-family:var(--mono);font-size:8pt}
+.ann.ok li:before{content:"✓";color:var(--green)}
+.ann.bad li:before{content:"✗";color:var(--red)}
+.ann.mid li:before{content:"~";color:var(--orange)}
 """
 
 def widget(kind, sub, items, inp="Type your message…"):
@@ -61,7 +86,7 @@ def side(kind, label, w, cap):
     return f'<div><div class="side-label {kind}"><span class="dot"></span>{label}</div>{w}<div class="cap">{cap}</div></div>'
 
 TAG = {"fits": '<span class="tag fits">Fits</span>', "part": '<span class="tag part">Partly</span>', "no": '<span class="tag no">Doesn\'t fit</span>'}
-NEEDS = ["Correct answers", "Suggests courses", "Easy to update", "Saves leads", "Hands over"]
+NEEDS = ["Correct answers", "Suggests courses", "Easy to update", "Saves leads", "Hands over", "Matches our design"]
 def verdict(marks):
     return '<div class="verdict">' + "".join(f"<div>{n}<br>{TAG[m]}</div>" for n, m in zip(NEEDS, marks)) + "</div>"
 
@@ -76,7 +101,7 @@ def how(steps):
         h += f'<div class="s">{s}</div>'
     return h + "</div>"
 
-T = 5
+T = 6
 pages = []
 
 # ---------- PAGE 1 ----------
@@ -88,7 +113,7 @@ pages.append(page(1, T, f'''
   <div class="cards">
     <div><span class="label">What Zoho offers</span>Three bot types in SalesIQ: a flow builder (Zobot), a FAQ bot (Answer Bot), and Zobot with SalesIQ Scripts.</div>
     <div><span class="label">What they're good at</span>Collecting a student's details and passing the chat to our team.</div>
-    <div><span class="label">Where they fail</span>Understanding a student's question in their own words and suggesting the right course.</div>
+    <div><span class="label">Where they fail</span>Understanding a student's question, suggesting the right course, and matching our site's design.</div>
   </div>
 
   <div class="sec-rule"></div>
@@ -100,6 +125,7 @@ pages.append(page(1, T, f'''
     <div><b>Easy to update</b>The team can change a fee or date without a developer.</div>
     <div><b>Saves leads</b>Name, phone and course reach Zoho CRM.</div>
     <div><b>Hands over</b>Offers a call-back when it can't help.</div>
+    <div><b>Matches our design</b>Looks like part of the new website, not a third-party add-on.</div>
   </div>
 
   <div class="sec-rule"></div>
@@ -146,7 +172,7 @@ pages.append(page(2, T, f'''
     {side("ok", "Where it works · collecting details", w1ok, "Button-driven forms work well. The student's details go straight into Zoho CRM.")}
     {side("bad", "Where it fails · asking for advice", w1bad, "The moment a student types a real question, the bot can only repeat its menu.")}
   </div>
-  {verdict(["no", "no", "part", "fits", "fits"])}
+  {verdict(["no", "no", "part", "fits", "fits", "part"])}
   <div class="bottom"><b>Why we can't use it:</b> it's a form with buttons, not a conversation. To "recommend" courses we'd have to draw a branch for every background, skill and goal, which nobody could maintain.</div>
 '''))
 
@@ -175,7 +201,7 @@ pages.append(page(3, T, f'''
     {side("ok", "Where it works · simple facts", w2ok, "Direct questions with a ready answer in one article work fine.")}
     {side("bad", "Where it fails · personal advice", w2bad, "It answers from one article at a time. It can't understand the student and suggest a path.")}
   </div>
-  {verdict(["part", "no", "part", "part", "fits"])}
+  {verdict(["part", "no", "part", "part", "fits", "part"])}
   <div class="bottom"><b>Why we can't use it:</b> it's a search box over FAQs. All course info would have to be rewritten as articles and kept in sync by hand, and it still couldn't suggest courses or collect leads on its own.</div>
 '''))
 
@@ -205,9 +231,47 @@ pages.append(page(4, T, f'''
     {side("ok", "Where it works · exact keywords", w3ok, "Questions that contain the words we coded for get the right answer.")}
     {side("bad", "Where it fails · real student questions", w3bad, "Students don't use our keywords. Anything we didn't predict falls through.")}
   </div>
-  {verdict(["part", "no", "no", "fits", "fits"])}
+  {verdict(["part", "no", "no", "fits", "fits", "part"])}
   <div class="bottom"><b>Why we can't use it:</b> it isn't AI, just hand-written if/else rules. Every new question or fee change needs someone who knows Deluge, so the team couldn't update it on their own.</div>
 '''))
+
+
+# ---------- DESIGN PAGE ----------
+zw = """<div class="widget zs" style="border-color:#c9cfdb">
+<div class="whead"><div class="av">D</div><div><div class="wt">DataSphere</div><div class="ws" style="color:#dbe6fb">We typically reply in a few minutes</div></div></div>
+<div class="wbody" style="min-height:58mm">
+<div class="m b">Hi there! How can we help you today?</div>
+<div class="chips"><span style="border-color:#2a6fdb;color:#2a6fdb">Courses</span><span style="border-color:#2a6fdb;color:#2a6fdb">Fees</span><span style="border-color:#2a6fdb;color:#2a6fdb">Talk to us</span></div>
+<div class="m u">Courses</div>
+<div class="m b">We offer Data Analytics, Data Science and Machine Learning. Which one would you like to know about?</div>
+</div>
+<div class="winput"><span>Write a reply…</span><span>➤</span></div>
+<div class="zbrand">Driven by Zoho SalesIQ</div></div>"""
+dw = """<div class="widget ds" style="border-color:var(--ink)">
+<div class="whead"><div class="av">D</div><div><div class="wt">Ask DataSphere</div><div class="ws" style="color:#cfe3d6">Course advisor · replies instantly</div></div></div>
+<div class="wbody" style="min-height:58mm">
+<div class="m b">Hi! Tell me your background and goal, and I'll suggest the right course.</div>
+<div class="m u">I want to become a data analyst.</div>
+<div class="course"><div class="ct">Data Analytics</div><div class="cm">16 weeks · Weekend batch · Online / Classroom</div>Excel, SQL, Power BI and Python for analysis.<br><div style="margin-top:1.6mm"><span class="cb">Enrol</span><span class="cb o">View syllabus</span></div></div>
+</div>
+<div class="winput"><span>Ask about any course…</span><span>➤</span></div></div>"""
+pages.append(page(5, T, f"""
+  <div class="rule" style="border-top:1px solid var(--ink);margin-top:6mm"></div>
+  <div class="num">06 · A problem with all three options</div>
+  <h2>The chat window can't look like our website</h2>
+  <p class="intro">Whichever bot type we pick, the chat window itself is <b>SalesIQ's ready-made template</b>. We can only change what Zoho's settings allow. The new website will have its own fonts, colours and layout, and the chat window would still look like a Zoho add-on sitting on top of it.</p>
+  <div class="pair">
+    <div><div class="side-label bad"><span class="dot"></span>SalesIQ widget · Zoho's template</div>{zw}
+      <ul class="ann mid"><li>We can change: theme, colours, position, logo and greeting text</li></ul>
+      <ul class="ann bad"><li>Layout, chat bubbles and overall look stay Zoho's template</li><li>Can't use our website's own design and components</li><li>Feels like a third-party tool, not part of our site</li></ul>
+    </div>
+    <div><div class="side-label ok"><span class="dot"></span>Our own widget · built for our site</div>{dw}
+      <ul class="ann ok"><li>Same fonts, colours and style as the new website</li><li>Our own course cards with Enrol and syllabus buttons</li><li>We decide every detail: size, layout and behaviour on mobile</li><li>Feels like part of DataSphere, not an add-on</li></ul>
+    </div>
+  </div>
+  <div class="bottom"><b>Why this matters:</b> we're rebuilding the website to look modern and consistent. A chat window we can't fully design would be the one part of the site that doesn't match.</div>
+  <p class="small" style="margin-top:3mm">The left mock-up is a simplified illustration of SalesIQ's default style, not a screenshot. Exact customisation options depend on our SalesIQ plan.</p>
+"""))
 
 # ---------- ALTERNATIVE ----------
 w4 = widget("ok", "Our bot · course content + AI", [
@@ -227,10 +291,11 @@ grid = """
     <tr><td class="k">Easy to update</td><td>{part}</td><td>{part}</td><td>{no}</td><td>{fits}</td></tr>
     <tr><td class="k">Saves leads</td><td>{fits}</td><td>{part}</td><td>{fits}</td><td>{fits}</td></tr>
     <tr><td class="k">Hands over</td><td>{fits}</td><td>{fits}</td><td>{fits}</td><td>{fits}</td></tr>
+    <tr><td class="k">Matches our design</td><td>{part}</td><td>{part}</td><td>{part}</td><td>{fits}</td></tr>
   </table>""".format(**TAG)
-pages.append(page(5, T, f'''
+pages.append(page(6, T, f'''
   <div class="rule" style="border-top:1px solid var(--ink);margin-top:6mm"></div>
-  <div class="num">06 · The better option</div>
+  <div class="num">07 · The better option</div>
   <h2>Our own RAG chatbot, with leads saved in Zoho</h2>
   <p class="intro">Instead of Zoho's bots, we build a chatbot on our own course content (RAG + an AI model). It reads our course details, talks to the student in plain language, suggests the right course, and saves every interested student in <b>Zoho CRM</b>, so the team's follow-up stays exactly the same.</p>
   {how(["<b>Student</b> asks in their own words", "<b>Our bot</b> looks up our course info (RAG)", "<b>AI</b> writes the answer and suggests courses", "<b>Zoho CRM</b> gets the lead automatically"])}
@@ -242,6 +307,7 @@ pages.append(page(5, T, f'''
       <div class="note"><b>Easy to update:</b> the team edits one course sheet; the bot uses it.</div>
       <div class="note"><b>Saves leads:</b> name, phone and course go straight to Zoho CRM.</div>
       <div class="note"><b>Hands over:</b> offers a call-back whenever it can't help.</div>
+      <div class="note"><b>Matches our design:</b> built in our own fonts, colours and layout.</div>
     </div>
   </div>
   {grid}
