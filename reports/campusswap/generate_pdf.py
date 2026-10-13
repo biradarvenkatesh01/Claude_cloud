@@ -58,9 +58,9 @@ def oval_w(s):
 
 def er_page(c, stage):
     after = stage == "after"
-    c.setPageSize((LW, LH))
-    p = P(c, LH)
-    header(p, LW)
+    c.setPageSize((PW, PH))
+    p = P(c, PH)
+    header(p, PW)
     p.text(25, 74, ("4. Final Normalized ER Diagram (3NF)" if after
                     else "1. Entity-Relationship Diagram (before normalization)"),
            "Helvetica-Bold", 12, center=False, color=C_HEAD)
@@ -82,11 +82,11 @@ def er_page(c, stage):
     fills = {}
     # ----- entity placement
     for n, x, y, f in [
-        ("BRANCH", 95, 135, C_ENT), ("SEMESTER", 315, 135, C_ENT),
-        ("SUBJECT", 205, 225, C_ENT), ("PRODUCT", 520, 225, C_ENT), ("CATEGORY", 745, 225, C_ENT),
-        ("STUDENT", 150, 360, C_ENT), ("WISHLIST", 335, 290, C_BRIDGE), ("LISTING", 520, 360, C_ENT),
-        ("EXCHANGE_REQUEST", 760, 360, C_BRIDGE),
-        ("ORDERS", 335, 470, C_ENT), ("PAYMENT", 185, 548, C_DEP), ("REVIEW", 490, 548, C_DEP)]:
+        ("BRANCH", 75, 140, C_ENT), ("SEMESTER", 245, 140, C_ENT), ("CATEGORY", 515, 140, C_ENT),
+        ("SUBJECT", 160, 240, C_ENT), ("PRODUCT", 390, 240, C_ENT),
+        ("STUDENT", 115, 375, C_ENT), ("WISHLIST", 250, 315, C_BRIDGE), ("LISTING", 390, 375, C_ENT),
+        ("EXCHANGE_REQUEST", 480, 535, C_BRIDGE),
+        ("ORDERS", 250, 590, C_ENT), ("PAYMENT", 125, 695, C_DEP), ("REVIEW", 385, 695, C_DEP)]:
         entity(n, x, y)
         fills[n] = f
 
@@ -97,41 +97,39 @@ def er_page(c, stage):
             attrs.append((lab, kind, x, y, entname, side))
 
     pk, fk, at, cpk = "pk", "fk", "at", "cpk"
-    A("BRANCH", "t", [("Branch_ID", pk, 60, 103), ("Branch_Name", at, 130, 103)])
-    A("SEMESTER", "t", [("Semester_ID", pk, 278, 103), ("Semester_No", at, 352, 103)])
-    A("CATEGORY", "t", [("Category_ID", pk, 712, 190), ("Category_Name", at, 785, 190)])
-    A("SUBJECT", "l", [("Subject_ID", pk, 75, 205), ("Subject_Name", at, 75, 221),
-                       ("Subject_Code", at, 75, 237), ("Branch_ID", fk, 75, 253), ("Semester_ID", fk, 75, 269)])
-    A("PRODUCT", "t", [("Product_ID", pk, 403, 172), ("Title", at, 450, 172), ("Author", at, 494, 172),
-                       ("Edition", at, 540, 172), ("Subject_ID", fk, 590, 172), ("Category_ID", fk, 643, 172)])
-    A("STUDENT", "l", [("Student_ID", pk, 50, 312), ("Name", at, 50, 328), ("Email", at, 50, 344),
-                       ("Phone", at, 50, 360), ("Password", at, 50, 376), ("Branch_ID", fk, 50, 392),
-                       ("Semester_ID", fk, 50, 408)])
+    A("BRANCH", "t", [("Branch_ID", pk, 45, 108), ("Branch_Name", at, 108, 108)])
+    A("SEMESTER", "t", [("Semester_ID", pk, 212, 108), ("Semester_No", at, 280, 108)])
+    A("CATEGORY", "t", [("Category_ID", pk, 482, 108), ("Category_Name", at, 548, 108)])
+    A("SUBJECT", "l", [("Subject_ID", pk, 45, 216), ("Subject_Name", at, 45, 232),
+                       ("Subject_Code", at, 45, 248), ("Branch_ID", fk, 45, 264), ("Semester_ID", fk, 45, 280)])
+    A("PRODUCT", "t", [("Product_ID", pk, 318, 180), ("Title", at, 345, 197), ("Author", at, 372, 180),
+                       ("Edition", at, 399, 197), ("Subject_ID", fk, 428, 180), ("Category_ID", fk, 452, 197)])
+    A("STUDENT", "l", [("Student_ID", pk, 38, 327), ("Name", at, 38, 343), ("Email", at, 38, 359),
+                       ("Phone", at, 38, 375), ("Password", at, 38, 391), ("Branch_ID", fk, 38, 407),
+                       ("Semester_ID", fk, 38, 423)])
     if after:
-        A("WISHLIST", "b", [("Student_ID", cpk, 300, 322), ("Listing_ID", cpk, 352, 322), ("Added_At", at, 400, 322)])
+        A("WISHLIST", "t", [("Student_ID", cpk, 205, 285), ("Listing_ID", cpk, 253, 285), ("Added_At", at, 298, 285)])
     else:
-        A("WISHLIST", "b", [("Student_ID", fk, 280, 322), ("Listing_ID", fk, 326, 322), ("Added_At", at, 370, 322),
-                            ("Listing_Price", at, 418, 322)])
-    lst = [("Listing_ID", pk, 625, 266), ("Price", at, 625, 284), ("Condition", at, 625, 302),
-           ("Status", at, 625, 320), ("Listed_At", at, 625, 338)]
-    A("LISTING", "r", lst)
-    if after:
-        A("LISTING", "br", [("Student_ID", fk, 590, 400), ("Product_ID", fk, 660, 400)])
-    else:
-        A("LISTING", "br", [("Student_ID", fk, 580, 398), ("Product_ID", fk, 680, 398),
-                            ("Subject_ID", fk, 630, 414), ("Category_ID", fk, 712, 422)])
-    A("EXCHANGE_REQUEST", "spine", [("Request_ID", pk, 790, 390), ("Requester_ID", fk, 790, 406),
-                                ("Target_Listing_ID", fk, 790, 422), ("Offered_Listing_ID", fk, 790, 438),
-                                ("Status", at, 790, 454), ("Requested_At", at, 790, 470)])
-    ordr = [("Order_ID", pk, 232, 412), ("Buyer_ID", fk, 272, 396), ("Listing_ID", fk, 314, 412),
-            ("Order_Date", at, 356, 396), ("Amount", at, 398, 412), ("Status", at, 436, 396)]
+        A("WISHLIST", "t", [("Student_ID", fk, 200, 285), ("Listing_ID", fk, 245, 285), ("Added_At", at, 289, 285),
+                            ("Listing_Price", at, 337, 285)])
+    lst = [("Listing_ID", pk), ("Price", at), ("Condition", at), ("Status", at), ("Listed_At", at),
+           ("Student_ID", fk), ("Product_ID", fk)]
     if not after:
-        ordr.append(("Seller_ID", fk, 418, 432))
+        lst += [("Subject_ID", fk), ("Category_ID", fk)]
+    y0 = 375 - (len(lst) - 1) * 16 / 2
+    A("LISTING", "r", [(l, k, 510, y0 + i * 16) for i, (l, k) in enumerate(lst)])
+    A("EXCHANGE_REQUEST", "spine", [("Request_ID", pk, 500, 562), ("Requester_ID", fk, 500, 578),
+                                ("Target_Listing_ID", fk, 500, 594), ("Offered_Listing_ID", fk, 500, 610),
+                                ("Status", at, 500, 626), ("Requested_At", at, 500, 642)])
+    ordr = [("Order_ID", pk, 172, 532), ("Buyer_ID", fk, 197, 515), ("Listing_ID", fk, 222, 532),
+            ("Order_Date", at, 250, 515), ("Amount", at, 278, 532), ("Status", at, 303, 515)]
+    if not after:
+        ordr.append(("Seller_ID", fk, 328, 532))
     A("ORDERS", "t", ordr)
-    A("PAYMENT", "l", [("Payment_ID", pk, 62, 445), ("Order_ID", fk, 62, 461), ("Amount", at, 62, 477),
-                       ("Payment_Method", at, 62, 493), ("Payment_Status", at, 62, 509), ("Paid_At", at, 62, 525)])
-    A("REVIEW", "r", [("Review_ID", pk, 600, 500), ("Order_ID", fk, 600, 516), ("Rating", at, 600, 532),
-                      ("Comment", at, 600, 548), ("Review_Date", at, 600, 564)])
+    A("PAYMENT", "l", [("Payment_ID", pk, 40, 655), ("Order_ID", fk, 40, 671), ("Amount", at, 40, 687),
+                       ("Payment_Method", at, 40, 703), ("Payment_Status", at, 40, 719), ("Paid_At", at, 40, 735)])
+    A("REVIEW", "r", [("Review_ID", pk, 500, 672), ("Order_ID", fk, 500, 688), ("Rating", at, 500, 704),
+                      ("Comment", at, 500, 720), ("Review_Date", at, 500, 736)])
 
     # attribute connector lines (drawn first)
     for lab, kind, x, y, en, side in attrs:
@@ -155,19 +153,19 @@ def er_page(c, stage):
 
     # relationships: (label, x, y, [(entity, side, card, (dx,dy) label offset)])
     rels = [
-        ("has", 145, 180, [("BRANCH", "b", "1", (6, 9)), ("SUBJECT", "tl", "N", (-8, -6))]),
-        ("offers", 265, 180, [("SEMESTER", "b", "1", (6, 9)), ("SUBJECT", "tr", "N", (8, -6))]),
-        ("covers", 362, 225, [("SUBJECT", "r", "1", (6, -6)), ("PRODUCT", "l", "N", (-6, -6))]),
-        ("classifies", 645, 225, [("CATEGORY", "l", "1", (-6, -6)), ("PRODUCT", "r", "N", (6, -6))]),
-        ("refers to", 520, 297, [("PRODUCT", "b", "1", (6, 8)), ("LISTING", "t", "N", (6, -7))]),
-        ("creates", 335, 360, [("STUDENT", "r", "1", (6, -6)), ("LISTING", "l", "N", (-6, -6))]),
-        ("adds", 235, 300, [("STUDENT", "tr", "1", (8, -4)), ("WISHLIST", "l", "N", (-6, -6))]),
-        ("saved in", 432, 300, [("WISHLIST", "r", "N", (6, -6)), ("LISTING", "tl", "1", (-8, -4))]),
-        ("requested in", 645, 360, [("LISTING", "r", "1", (6, -6)), ("EXCHANGE_REQUEST", "l", "N", (-6, -6))]),
-        ("places", 205, 432, [("STUDENT", "b", "1", (6, 8)), ("ORDERS", "l", "N", (-6, -6))]),
-        ("sold in", 478, 432, [("LISTING", "b", "1", (6, 8)), ("ORDERS", "r", "0/1", (8, -6))]),
-        ("paid by", 260, 510, [("ORDERS", "bl", "1", (-8, 6)), ("PAYMENT", "tr", "1", (8, -5))]),
-        ("gets", 420, 510, [("ORDERS", "br", "1", (8, 6)), ("REVIEW", "tl", "0/1", (-10, -5))]),
+        ("has", 110, 190, [("BRANCH", "b", "1", (6, 9)), ("SUBJECT", "tl", "N", (-8, -6))]),
+        ("offers", 210, 190, [("SEMESTER", "b", "1", (6, 9)), ("SUBJECT", "tr", "N", (8, -6))]),
+        ("covers", 275, 240, [("SUBJECT", "r", "1", (6, -6)), ("PRODUCT", "l", "N", (-6, -6))]),
+        ("classifies", 515, 205, [("CATEGORY", "b", "1", (6, 9)), ("PRODUCT", "r", "N", (6, -6))]),
+        ("refers to", 390, 308, [("PRODUCT", "b", "1", (6, 8)), ("LISTING", "t", "N", (6, -7))]),
+        ("creates", 250, 375, [("STUDENT", "r", "1", (6, -6)), ("LISTING", "l", "N", (-6, -6))]),
+        ("adds", 168, 322, [("STUDENT", "tr", "1", (8, -4)), ("WISHLIST", "l", "N", (-6, -6))]),
+        ("saved in", 328, 322, [("WISHLIST", "r", "N", (6, -6)), ("LISTING", "tl", "1", (-8, -4))]),
+        ("requested in", 480, 470, [("LISTING", "br", "1", (8, 8)), ("EXCHANGE_REQUEST", "t", "N", (8, -7))]),
+        ("places", 115, 470, [("STUDENT", "b", "1", (6, 8)), ("ORDERS", "l", "N", (-6, -6))]),
+        ("sold in", 395, 470, [("LISTING", "b", "1", (-6, 8)), ("ORDERS", "r", "0/1", (8, -6))]),
+        ("paid by", 175, 640, [("ORDERS", "bl", "1", (-8, 6)), ("PAYMENT", "tr", "1", (8, -5))]),
+        ("gets", 320, 640, [("ORDERS", "br", "1", (8, 6)), ("REVIEW", "tl", "0/1", (-10, -5))]),
     ]
     dw, dh = 54, 24
     for lab, rx, ry, ends in rels:
@@ -193,7 +191,7 @@ def er_page(c, stage):
         draw_oval(p, lab, kind, x, y)
 
     # legend
-    lx, ly, lw_, lh_ = 655, 488, 175, 80
+    lx, ly, lw_, lh_ = 200, 722, 175, 78
     c.setStrokeColor(BORDER); c.setLineWidth(0.6); c.setDash(); c.setFillColor(colors.white)
     c.rect(lx, p.Y(ly + lh_), lw_, lh_, fill=1, stroke=1)
     p.text(lx + 6, ly + 9, "Legend", "Helvetica-Bold", 6.5, center=False)
@@ -220,7 +218,7 @@ def er_page(c, stage):
     p.text(25, 89, "STUDENT also references BRANCH and SEMESTER (Branch_ID, Semester_ID). "
            "EXCHANGE_REQUEST also stores the requester (STUDENT) and the offered LISTING.",
            size=6, center=False, color=GREY)
-    footer(p, LW, 1 if not after else 4)
+    footer(p, PW, 1 if not after else 4)
     c.showPage()
 
 
@@ -248,14 +246,14 @@ def draw_oval(p, lab, kind, x, y, w=None):
 # ---------------------------------------------------------------- relational schema
 def schema_page(c, stage):
     after = stage == "after"
-    c.setPageSize((LW, LH))
-    p = P(c, LH)
-    header(p, LW)
+    c.setPageSize((PW, PH))
+    p = P(c, PH)
+    header(p, PW)
     if after:
         p.text(25, 82, "5. Final Normalized Relational Schema (3NF)", "Helvetica-Bold", 12, center=False, color=C_HEAD)
         p.text(25, 97, "WISHLIST now uses a composite primary key and no longer stores Listing_Price; Subject_ID and "
-               "Category_ID are removed from LISTING and Seller_ID from ORDERS. All other tables are unchanged.",
-               size=7, center=False)
+               "Category_ID are removed", size=7, center=False)
+        p.text(25, 107, "from LISTING and Seller_ID from ORDERS. All other tables are unchanged.", size=7, center=False)
     else:
         p.text(25, 82, "2. Relational Schema (before normalization)", "Helvetica-Bold", 12, center=False, color=C_HEAD)
         p.text(25, 97, "The ER diagram is mapped to twelve relations. These are the tables checked in the "
@@ -281,57 +279,42 @@ def schema_page(c, stage):
                   [("Order_Date", ""), ("Amount", ""), ("Status", "")],
         "REVIEW": [("Review_ID", "PK"), ("Order_ID", "FK"), ("Rating", ""), ("Comment", ""), ("Review_Date", "")],
     }
-    W = 128
-    cols = [25, 190, 355, 520, 685]
-    pos = {"BRANCH": (0, 125), "SUBJECT": (1, 125), "SEMESTER": (2, 125), "PRODUCT": (3, 125), "CATEGORY": (4, 125),
-           "STUDENT": (0, 290), "WISHLIST": (1, 290), "LISTING": (2, 290), "EXCHANGE_REQUEST": (3, 290),
-           "PAYMENT": (0, 452), "ORDERS": (1, 452), "REVIEW": (2, 452)}
+    W = 160
+    cols = [25, 217, 409]
+    pos = {"BRANCH": (0, 128), "SEMESTER": (1, 128), "SUBJECT": (2, 128),
+           "CATEGORY": (1, 238), "PRODUCT": (2, 238),
+           "STUDENT": (0, 358), "WISHLIST": (1, 358), "LISTING": (2, 358),
+           "ORDERS": (1, 525), "EXCHANGE_REQUEST": (2, 525),
+           "PAYMENT": (0, 665), "REVIEW": (1, 665)}
     HH, RH = 14, 11.5
     box = {}
     for n, (ci, top) in pos.items():
-        x = cols[ci]
-        box[n] = (x, top, W, HH + RH * len(T[n]))
+        box[n] = (cols[ci], top, W, HH + RH * len(T[n]))
 
-    def side(n, s, frac=None, off=None):
+    def side(n, s, off):
         x, top, w, h = box[n]
-        if s == "t": return (x + (w * frac if frac is not None else off), top)
-        if s == "b": return (x + (w * frac if frac is not None else off), top + h)
-        if s == "l": return (x, top + off)
-        if s == "r": return (x + w, top + off)
+        return {"t": (x + off, top), "b": (x + off, top + h), "l": (x, top + off), "r": (x + w, top + off)}[s]
 
     conns = [
-        # points list, start label (parent side), end label (child side)
-        ([side("BRANCH", "r", off=40), side("SUBJECT", "l", off=40)], "1", "N"),
-        ([side("SEMESTER", "l", off=40), side("SUBJECT", "r", off=40)], "1", "N"),
-        ([side("CATEGORY", "l", off=40), side("PRODUCT", "r", off=40)], "1", "N"),
-        ("SUBJ-PROD",),
-        ("BR-ST",),
-        ("SEM-ST",),
-        ("PROD-LIST",),
-        ("ST-LIST",),
-        ([side("STUDENT", "r", off=40), side("WISHLIST", "l", off=40)], "1", "N"),
-        ([side("LISTING", "l", off=40), side("WISHLIST", "r", off=40)], "1", "N"),
-        ([side("LISTING", "r", off=60), side("EXCHANGE_REQUEST", "r", off=0)[:0] or side("EXCHANGE_REQUEST", "l", off=60)], "1", "N"),
-        ("ST-ORD",),
-        ("LIST-ORD",),
-        ([side("ORDERS", "l", off=40), side("PAYMENT", "r", off=40)], "1", "1"),
-        ([side("ORDERS", "r", off=40), side("REVIEW", "l", off=40)], "1", "0/1"),
+        ([side("BRANCH", "t", 80), (105, 116), (489, 116), side("SUBJECT", "t", 80)], "1", "N"),
+        ([side("SEMESTER", "r", 40), side("SUBJECT", "l", 40)], "1", "N"),
+        ([side("SUBJECT", "b", 80), side("PRODUCT", "t", 80)], "1", "N"),
+        ([side("CATEGORY", "r", 30), side("PRODUCT", "l", 30)], "1", "N"),
+        ([side("BRANCH", "b", 40), side("STUDENT", "t", 40)], "1", "N"),
+        ([side("SEMESTER", "b", 45), (262, 218), (145, 218), side("STUDENT", "t", 120)], "1", "N"),
+        ([side("PRODUCT", "b", 80), side("LISTING", "t", 80)], "1", "N"),
+        ([side("STUDENT", "t", 140), (165, 342), (430, 342), side("LISTING", "t", 21)], "1", "N"),
+        ([side("STUDENT", "r", 30), side("WISHLIST", "l", 30)], "1", "N"),
+        ([side("LISTING", "l", 30), side("WISHLIST", "r", 30)], "1", "N"),
+        ([side("LISTING", "b", 80), side("EXCHANGE_REQUEST", "t", 80)], "1", "N"),
+        ([side("LISTING", "b", 25), (434, 505), (297, 505), side("ORDERS", "t", 80)], "1", "0/1"),
+        ([side("STUDENT", "b", 40), (65, 565), side("ORDERS", "l", 40)], "1", "N"),
+        ([side("ORDERS", "l", 75), (145, 600), side("PAYMENT", "t", 120)], "1", "1"),
+        ([side("ORDERS", "b", 80), side("REVIEW", "t", 80)], "1", "0/1"),
     ]
-    sx, st, sw, sh = box["SUBJECT"]; px, pt, pw, ph = box["PRODUCT"]
-    bx, bt, bw, bh = box["BRANCH"]; mx, mt, mw, mh = box["SEMESTER"]
-    stx, stt, stw, sth = box["STUDENT"]; lx, lt, lw_, lh_ = box["LISTING"]; ox, ot, ow, oh = box["ORDERS"]
-    special = {
-        "SUBJ-PROD": ([(sx + sw / 2, st), (sx + sw / 2, 112), (px + pw / 2, 112), (px + pw / 2, pt)], "1", "N"),
-        "BR-ST": ([(bx + 30, bt + bh), (bx + 30, stt)], "1", "N"),
-        "SEM-ST": ([(mx + mw / 2, mt + mh), (mx + mw / 2, 236), (stx + 80, 236), (stx + 80, stt)], "1", "N"),
-        "PROD-LIST": ([(px + pw / 2, pt + ph), (px + pw / 2, 250), (lx + 90, 250), (lx + 90, lt)], "1", "N"),
-        "ST-LIST": ([(stx + 110, stt), (stx + 110, 266), (lx + 40, 266), (lx + 40, lt)], "1", "N"),
-        "ST-ORD": ([(stx + 64, stt + sth), (stx + 64, 428), (ox + 30, 428), (ox + 30, ot)], "1", "N"),
-        "LIST-ORD": ([(lx + 50, lt + lh_), (lx + 50, 440), (ox + 98, 440), (ox + 98, ot)], "1", "0/1"),
-    }
     c.setLineWidth(0.7)
     for cn in conns:
-        pts, a, b = special[cn[0]] if len(cn) == 1 else cn
+        pts, a, b = cn
         c.setStrokeColor(BORDER); c.setDash()
         for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
             p.line(x1, y1, x2, y2, 0.7)
@@ -363,10 +346,11 @@ def schema_page(c, stage):
                 c.setStrokeColor(colors.HexColor("#DDDDDD")); c.setLineWidth(0.3)
                 c.line(x, p.Y(top + HH + RH * i), x + w, p.Y(top + HH + RH * i))
 
-    p.text(25, 560, "PK = primary key (underlined)    FK = foreign key    Arrows join the parent table (1 side) to the "
-           "child table (N side).    EXCHANGE_REQUEST.Requester_ID references STUDENT and Offered_Listing_ID "
-           "references LISTING; ORDERS.Buyer_ID references STUDENT.", size=5.6, center=False, color=GREY)
-    footer(p, LW, 5 if after else 2)
+    p.text(25, 785, "PK = primary key (underlined)    FK = foreign key    Arrows join the parent table (1 side) to the "
+           "child table (N side).", size=6, center=False, color=GREY)
+    p.text(25, 796, "EXCHANGE_REQUEST.Requester_ID references STUDENT and Offered_Listing_ID references LISTING; "
+           "ORDERS.Buyer_ID references STUDENT.", size=6, center=False, color=GREY)
+    footer(p, PW, 5 if after else 2)
     c.showPage()
 
 
